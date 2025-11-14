@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain Test Page</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color-scheme: light dark;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #e0f7ff, #dfe3ff, #f4f4f4);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.8rem;
+    }
+
+    .domain {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #555;
+      word-break: break-word;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      margin: 0.4rem 0;
+      color: #444;
+      font-size: 0.98rem;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: #e6f6ea;
+      color: #116326;
+    }
+
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>It works! 🎉</h1>
+    <div class="domain">
+      This is a test page for your domain.
+    </div>
+
+    <p>If you can see this page, your web server is up and serving HTML correctly.</p>
+    <p>You can now replace this file with your real website files.</p>
+
+    <div class="status">Status: Online</div>
+
+    <div class="footer">
+      File: <code>index.html</code><br />
+      Last updated: <!-- you can edit this manually --> November 2025
+    </div>
+  </main>
+</body>
+</html>
