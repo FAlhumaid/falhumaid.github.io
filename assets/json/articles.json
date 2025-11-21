@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Prefetch Files",
+    "slug": "prefetch",
+    "category": "Execution",
+    "platform": "Windows",
+    "summary": "Prefetch records evidence of process execution, including last run and accessed resources."
+  },
+  {
+    "title": "USN Journal",
+    "slug": "usn",
+    "category": "File System",
+    "platform": "Windows",
+    "summary": "The NTFS USN Journal logs file system changes such as create, modify, rename, and delete operations."
+  }
+]

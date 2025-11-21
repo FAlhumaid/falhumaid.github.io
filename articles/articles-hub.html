@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Articles Hub | Faisal Alhumaid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/images/favicon-192.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/article.css" />
+</head>
+
+<body>
+
+  <!-- SHARED NAVBAR ROOT -->
+  <div id="navbar-root"></div>
+
+  <!-- ARTICLES HUB CONTENT -->
+  <main class="articles-hub">
+    <!-- Hero section -->
+    <section class="articles-hero">
+      <div class="articles-hero-main">
+        <h1>Articles Hub</h1>
+        <p class="articles-hero-subtitle">
+          These articles examine traces with the precision of a researcher and the mindset of an investigator.
+        </p>
+        <p class="articles-hero-meta">
+          The deeper you dig, the louder the system speaks.
+        </p>
+      </div>
+
+      <div class="articles-hero-side">
+        <ul>
+          <li>🔍 Reveal What Happened</li>
+          <li>🕵 Follow The Evidence</li>
+          <li>🗂️ Organize The Facts</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Header with search + view toggle -->
+    <header class="articles-hub-header">
+      <p>
+        Search across all articles using keywords such as artifact names, topics or investigation terms.
+      </p>
+
+      <div class="articles-view-row">
+        <div class="articles-search-bar">
+          <input
+            id="articles-search"
+            class="articles-search-input"
+            type="search"
+            placeholder="Search (e.g. prefetch, usn)...">
+          <div class="articles-search-meta" id="articles-count"></div>
+        </div>
+
+        <div class="articles-view-toggle">
+          <button class="view-toggle-btn view-toggle-btn-active" data-view="grid">
+            Grid
+          </button>
+          <button class="view-toggle-btn" data-view="list">
+            List
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <section class="articles-grid" id="articles-grid">
+      <!-- JS will populate cards here from articles.json -->
+    </section>
+  </main>
+
+  <!-- SHARED FOOTER ROOT -->
+  <div id="footer-root"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="/assets/js/scramble.js"></script>
+  <script src="/assets/js/nav-active.js"></script>
+  <script src="/assets/js/articles-hub.js"></script>
+  <script src="/assets/js/load-navbar.js"></script>
+  <script src="/assets/js/load-footer.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>USN Journal | Faisal Alhumaid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/images/favicon-192.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/article.css" />
+</head>
+
+<body>
+
+  <!-- SHARED NAVBAR ROOT -->
+  <div id="navbar-root"></div>
+
+  <!-- ARTICLE CONTENT -->
+  <main class="article-main">
+
+    <!-- JS will inject:
+         <nav class="article-toc">...</nav>
+         here, as the first child of .article-main -->
+
+    <div class="article-content">
+      <!-- Breadcrumb -->
+      <nav class="article-breadcrumb">
+        <a href="/">Home</a> / <a href="/articles/articles-hub.html">Articles Hub</a> / <span>USN Journal</span>
+      </nav>
+
+      <header class="article-header">
+        <h1>USN Journal – NTFS Change Tracking</h1>
+        <div class="article-meta">
+          <span><strong>Artifact:</strong> USN Journal</span>
+          <span><strong>Platform:</strong> Windows / NTFS</span>
+          <span><strong>Category:</strong> File System Activity</span>
+        </div>
+      </header>
+
+      <!-- Back link -->
+      <div class="article-back">
+        <a href="/articles/articles-hub.html">← Back to All Articles</a>
+      </div>
+
+      <section>
+        <h2>1. Overview</h2>
+        <p>
+          The Update Sequence Number (USN) Journal is an NTFS feature that records file
+          system changes on a volume. Each time a file or directory is created, modified,
+          renamed, or deleted, an entry can be written into the journal.
+        </p>
+        <p>
+          For DFIR, the USN Journal is a powerful artifact for reconstructing what happened
+          on a system at the file level, even when files have been removed or timestamps
+          have been manipulated.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Location</h2>
+        <p>
+          The USN Journal is stored as a metadata file on each NTFS volume, not a typical
+          user-visible file:
+        </p>
+        <pre><code>\\.\C:\
+$Extend\$UsnJrnl</code></pre>
+        <p class="note">
+          Direct parsing typically requires forensic tools or low-level access to the
+          NTFS structures. You usually won't browse to this path in Explorer.
+        </p>
+      </section>
+
+      <section>
+        <h2>3. What the USN Journal Records</h2>
+        <p>
+          A USN Journal entry generally contains:
+        </p>
+        <ul class="section-list">
+          <li><strong>Timestamp:</strong> When the change was recorded.</li>
+          <li><strong>File Reference / FRN:</strong> A reference to the file record in the MFT.</li>
+          <li><strong>Parent FRN:</strong> Reference to the parent directory.</li>
+          <li><strong>Reason flags:</strong> What type of change occurred (create, delete, rename, data overwrite, etc.).</li>
+          <li><strong>File or directory name:</strong> The object that changed.</li>
+        </ul>
+        <p>
+          By correlating FRNs and names with the Master File Table (MFT), you can reconstruct
+          long sequences of file activity.
+        </p>
+      </section>
+
+      <section>
+        <h2>4. DFIR Use Cases</h2>
+        <p>The USN Journal shines in investigations involving file-level activity, such as:</p>
+        <ul class="section-list">
+          <li>
+            <strong>Malware deployment:</strong> Track when malicious binaries were created,
+            modified, or deleted on disk.
+          </li>
+          <li>
+            <strong>Ransomware incidents:</strong> Identify mass-encryption or deletion events
+            by reviewing large numbers of file changes in a short time window.
+          </li>
+          <li>
+            <strong>Log tampering:</strong> Detect when important log files were wiped or altered
+            by correlating delete and overwrite events.
+          </li>
+          <li>
+            <strong>Data exfiltration staging:</strong> Find when archives or staging folders were
+            created or collected before exfiltration.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. Correlation with Other Artifacts</h2>
+        <p>
+          The real strength of USN comes from correlation with other sources of evidence:
+        </p>
+        <ul class="section-list">
+          <li>
+            <strong>Prefetch &amp; Amcache:</strong> Show which executables ran and when,
+            while USN reveals how those tools modified the file system.
+          </li>
+          <li>
+            <strong>Event Logs:</strong> Security, Sysmon, or application logs can be matched
+            to file changes around the same timestamps.
+          </li>
+          <li>
+            <strong>MFT:</strong> Use USN entries alongside MFT metadata to reconstruct name
+            changes, moves, and deletes.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>6. Limitations &amp; Anti-Forensics</h2>
+        <ul class="section-list">
+          <li>
+            <strong>Journal size is finite:</strong> Old entries roll off as new ones are
+            written, especially on busy systems.
+          </li>
+          <li>
+            <strong>Can be cleared or disabled:</strong> Attackers with admin rights can
+            reset or disable the USN Journal. This may leave its own traces in logs.
+          </li>
+          <li>
+            <strong>Volume-specific:</strong> USN data is per-volume, so you must examine the
+            correct volume(s) relevant to the case.
+          </li>
+        </ul>
+        <p class="note">
+          Even if the journal has been cleared, that action itself can be suspicious and worth
+          highlighting in your findings.
+        </p>
+      </section>
+
+      <section>
+        <h2>7. Lab Ideas</h2>
+        <p>To build intuition around USN behavior, you can:</p>
+        <ul class="section-list">
+          <li>
+            Create, modify, rename, and delete a set of test files and directories, then parse
+            the USN Journal and map each action to its entries.
+          </li>
+          <li>
+            Simulate a small “ransomware-style” script in a lab and examine the volume of USN
+            changes during encryption or deletion.
+          </li>
+          <li>
+            Compare USN timestamps with MFT timestamps to understand how they align and where
+            they differ.
+          </li>
+        </ul>
+      </section>
+    </div> <!-- /.article-content -->
+
+  </main>
+
+  <!-- SHARED FOOTER ROOT -->
+  <div id="footer-root"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="/assets/js/scramble.js"></script>
+  <script src="/assets/js/nav-active.js"></script>
+  <script src="/assets/js/article-toc.js"></script>
+  <script src="/assets/js/article-progress.js"></script>
+  <script src="/assets/js/load-navbar.js"></script>
+  <script src="/assets/js/load-footer.js"></script>
+
+</body>
+</html>

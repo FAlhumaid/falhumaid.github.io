@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome | Faisal Alhumaid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/images/favicon-192.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+<body>
+
+  <!-- SHARED NAVBAR ROOT -->
+  <div id="navbar-root"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <div class="profile-picture-wrapper">
+      <div class="profile-picture"></div>
+    </div>
+
+    <h1>Faisal Alhumaid</h1>
+    <h1 class="titleme">DFIR &amp; Cybersecurity</h1>
+
+    <!-- MAIN INTRO TEXT WITH SCRAMBLE EFFECT (on hover) -->
+    <p class="scrambled-container" id="scramble-text-main">
+      I’m a cybersecurity enthusiast focused on DFIR. This site is where I organize my notes on forensic artifacts, how they behave and how they can be used to understand system activity during an investigation. Everything here comes from hands-on testing and breaking down artifacts to see what evidence they actually provide. If you’re exploring DFIR or want to share ideas, feel free to connect.
+    </p>
+
+    <!-- DFIR EVIDENCE SNIPPETS ROTATOR -->
+    <p class="dfir-snippet">
+      <span class="dfir-snippet-label">&gt;</span>
+      <span id="dfir-rotating-snippet">DFIR</span>
+    </p>
+
+    <!-- RECENT ARTICLES SECTION -->
+    <section class="home-section recent-articles">
+      <h2>Recent Articles</h2>
+      <p class="section-subtitle">
+        Latest Forensics artifact articles.
+      </p>
+
+      <div id="home-articles-grid" class="home-articles-grid">
+        <p class="home-articles-placeholder">Loading recent articles…</p>
+      </div>
+
+      <div class="home-articles-footer">
+        <a href="/articles/" class="home-articles-link">View all articles &rarr;</a>
+      </div>
+    </section>
+
+    <!-- SOCIAL ICONS -->
+    <div class="social-icons">
+      <a href="https://www.linkedin.com/in/falhumaid/" target="_blank" title="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+
+      <a href="https://x.com/FS_Alhumaid" target="_blank" title="X">
+        <i class="fab fa-x-twitter"></i>
+      </a>
+
+      <a href="mailto:faisal.alhumaid@hotmail.com" title="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- SHARED FOOTER ROOT -->
+  <div id="footer-root"></div>
+
+  <!-- SCRIPTS -->
+  <script src="/assets/js/scramble.js"></script>
+  <script src="/assets/js/dfir-rotator.js"></script>
+  <script src="/assets/js/home-articles.js"></script>
+  <script src="/assets/js/nav-active.js"></script>
+  <script src="/assets/js/load-navbar.js"></script>
+  <script src="/assets/js/load-footer.js"></script>
+
+</body>
+</html>
